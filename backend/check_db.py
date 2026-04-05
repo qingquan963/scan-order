@@ -1,0 +1,12 @@
+import sqlite3
+conn = sqlite3.connect('scan_order.db')
+cur = conn.cursor()
+cur.execute('SELECT name FROM sqlite_master WHERE type="table"')
+print('Tables:', cur.fetchall())
+cur.execute('PRAGMA encoding')
+print('Encoding:', cur.fetchone())
+cur.execute('SELECT id, name FROM merchants LIMIT 5')
+print('Merchants:', cur.fetchall())
+cur.execute('SELECT id, name FROM categories LIMIT 5')
+print('Categories:', cur.fetchall())
+conn.close()

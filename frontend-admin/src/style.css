@@ -1,0 +1,243 @@
+/* ===== Global Reset & Base ===== */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #303133;
+  background: #f0f2f5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+  font-weight: 600;
+  color: #303133;
+}
+
+p {
+  margin: 0;
+}
+
+a {
+  color: #409eff;
+  text-decoration: none;
+}
+
+a:hover {
+  color: #66b1ff;
+}
+
+/* ===== Element Plus Overrides ===== */
+
+/* 卡片样式优化 */
+.el-card {
+  border-radius: 8px !important;
+  border: 1px solid #ebeef5 !important;
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.04) !important;
+  transition: all 0.3s;
+}
+
+.el-card:hover {
+  box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.08) !important;
+}
+
+.el-card__header {
+  padding: 16px 20px;
+  border-bottom: 1px solid #ebeef5;
+  background: #fafafa;
+}
+
+.el-card__body {
+  padding: 20px;
+}
+
+/* 按钮样式优化 */
+.el-button {
+  border-radius: 6px !important;
+  font-weight: 500 !important;
+}
+
+.el-button--primary {
+  background-color: #409eff !important;
+  border-color: #409eff !important;
+}
+
+.el-button--primary:hover {
+  background-color: #66b1ff !important;
+  border-color: #66b1ff !important;
+}
+
+.el-button--danger {
+  background-color: #f56c6c !important;
+  border-color: #f56c6c !important;
+}
+
+.el-button--danger:hover {
+  background-color: #f78989 !important;
+  border-color: #f78989 !important;
+}
+
+/* 表格样式优化 */
+.el-table {
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.el-table th {
+  background-color: #fafafa !important;
+  color: #606266;
+  font-weight: 600;
+}
+
+.el-table td {
+  border-bottom: 1px solid #ebeef5 !important;
+}
+
+.el-table__header-wrapper {
+  border-radius: 8px 8px 0 0;
+}
+
+/* 表单样式优化 */
+.el-form-item__label {
+  font-weight: 500;
+  color: #606266;
+}
+
+.el-input__wrapper {
+  border-radius: 6px;
+}
+
+.el-input__inner {
+  border-radius: 6px;
+}
+
+/* 标签样式优化 */
+.el-tag {
+  border-radius: 4px;
+}
+
+/* 对话框样式优化 */
+.el-dialog {
+  border-radius: 12px !important;
+  overflow: hidden;
+}
+
+.el-dialog__header {
+  padding: 20px 24px 16px;
+  border-bottom: 1px solid #ebeef5;
+}
+
+.el-dialog__body {
+  padding: 24px;
+}
+
+.el-dialog__footer {
+  padding: 16px 24px;
+  border-top: 1px solid #ebeef5;
+}
+
+/* 分页样式优化 */
+.el-pagination {
+  margin-top: 20px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* 消息提示优化 */
+.el-message {
+  border-radius: 8px !important;
+}
+
+/* Tabs 样式优化 */
+.el-tabs__item {
+  font-weight: 500;
+}
+
+.el-tabs__item.is-active {
+  color: #409eff;
+}
+
+.el-tabs__active-bar {
+  background-color: #409eff;
+}
+
+/* ===== Utility Classes ===== */
+
+/* 页面通用头部 */
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #ebeef5;
+}
+
+.page-header h1 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #303133;
+  margin: 0;
+}
+
+.header-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+/* 通用卡片间距 */
+.card-container {
+  display: grid;
+  gap: 16px;
+}
+
+/* 通用操作栏 */
+.action-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+/* 通用筛选区域 */
+.filter-section {
+  margin-bottom: 16px;
+}
+
+/* 滚动条美化 */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #dcdfe6;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #c0c4cc;
+}
+
+::-webkit-scrollbar-track {
+  background: #f6f6f6;
+}
+
+/* 动画 */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.2s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}

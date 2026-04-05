@@ -1,0 +1,11 @@
+C:\Users\Administrator\AppData\Local\Programs\Python\Python310\lib\site-packages\requests\__init__.py:113: RequestsDependencyWarning: urllib3 (2.6.3) or chardet (7.4.0.post1)/charset_normalizer (3.4.4) doesn't match a supported version!
+  warnings.warn(
+============================================================
+  🦞 扫码点餐系统 - Phase 6 冒烟测试
+  后端地址: http://127.0.0.1:8002
+============================================================
+
+📋 [1] 公共接口 - 健康检查
+
+  🔴 请求错误：HTTPConnectionPool(host='127.0.0.1', port=8002): Read timed out. (read timeout=10)
+

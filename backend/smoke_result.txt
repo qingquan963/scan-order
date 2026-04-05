@@ -1,0 +1,52 @@
+C:\Users\Administrator\AppData\Local\Programs\Python\Python310\lib\site-packages\requests\__init__.py:113: RequestsDependencyWarning: urllib3 (2.6.3) or chardet (7.4.0.post1)/charset_normalizer (3.4.4) doesn't match a supported version!
+  warnings.warn(
+============================================================
+  🦞 扫码点餐系统 - Phase 6 冒烟测试
+  后端地址: http://127.0.0.1:8002
+============================================================
+
+📋 [1] 公共接口 - 健康检查
+  ✅ [PASS] GET /health
+
+📋 [2] 商户后台 - 登录认证
+  ✅ [PASS] POST /admin/auth/login（正确密码）
+  ✅ [PASS] 返回 access_token
+  ✅ [PASS] 返回 merchant_id
+  ✅ [PASS] POST /admin/auth/login（错误密码→401）
+  ✅ [PASS] 无 token 访问受保护接口→401
+
+📋 [3] 商户后台 - 分类管理 CRUD
+  ✅ [PASS] POST /admin/categories 创建成功
+  ✅ [PASS] GET /admin/categories 列表不为空
+  ✅ [PASS] PUT /admin/categories/{id} 更新成功
+
+📋 [4] 商户后台 - 菜品管理 CRUD
+  ✅ [PASS] POST /admin/dishes 创建成功
+  ✅ [PASS] GET /admin/dishes（按分类筛选）
+  ✅ [PASS] PUT /admin/dishes/{id} 更新成功
+  ✅ [PASS] PATCH /dishes/{id}/toggle-available
+  ✅ [PASS] POST /dishes price=0 拒绝（≥422）
+  ✅ [PASS] POST /dishes price=-10 拒绝（≥422）
+
+📋 [5] 商户后台 - 桌台管理 CRUD
+  ✅ [PASS] GET /admin/tables 列表不为空
+  ✅ [PASS] GET /tables/{id}/qrcode 返回 PNG
+  ✅ [PASS] PUT /admin/tables/{id} 更新成功
+  ✅ [PASS] POST /tables code 重复→409
+
+📋 [6] 顾客端 - 公开接口（无需认证）
+  ✅ [PASS] GET /customer/tables/{id}
+  ✅ [PASS] GET /customer/categories
+  ✅ [PASS] GET /customer/dishes
+  ❌ [FAIL] GET /customer/dishes/{id}
+  ✅ [PASS] GET /customer/merchants/{id}/settings
+
+📋 [7] 顾客端 - 订单全流程
+  ⚠️  期望 200，实际 500：Internal Server Error
+  ❌ [FAIL] POST /customer/orders 创建成功
+         Internal Server Error
+
+📋 [8] 商户后台 - 订单管理
+
+  🔴 无法连接到 http://127.0.0.1:8002/api/v1/admin/orders，请确认后端服务已启动（python run.py）
+
