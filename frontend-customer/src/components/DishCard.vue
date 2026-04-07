@@ -6,7 +6,7 @@ interface Dish {
   name: string
   price: number
   description: string
-  image: string
+  image_url: string
   is_available: number
 }
 
@@ -44,7 +44,7 @@ function truncate(text: string, maxLen: number): string {
 <template>
   <div class="dish-card" :class="{ 'sold-out': isSoldOut }">
     <div class="dish-image">
-      <img :src="dish.image || '/placeholder.png'" :alt="dish.name" />
+      <img :src="dish.image_url || '/placeholder.png'" :alt="dish.name" />
       <span v-if="isSoldOut" class="sold-out-tag">已售罄</span>
     </div>
     <div class="dish-info">

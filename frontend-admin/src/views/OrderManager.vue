@@ -69,6 +69,7 @@
               <el-button
                 v-if="row.status === 'pending'"
                 type="success"
+                :disabled="actionLoading"
                 @click.stop="handleStatusUpdate(row, 'confirmed')"
               >
                 接单
@@ -76,20 +77,14 @@
               <el-button
                 v-if="row.status === 'confirmed'"
                 type="warning"
+                :disabled="actionLoading"
                 @click.stop="handleStatusUpdate(row, 'paid')"
               >
                 结账
               </el-button>
               <el-button
-                v-if="row.status !== 'pending_payment'"
                 type="danger"
-                @click.stop="handleStatusUpdate(row, 'cancelled')"
-              >
-                取消订单
-              </el-button>
-              <el-button
-                v-if="row.status === 'pending_payment'"
-                type="danger"
+                :disabled="actionLoading"
                 @click.stop="handleStatusUpdate(row, 'cancelled')"
               >
                 取消订单
@@ -226,6 +221,7 @@ interface Order {
 }
 
 const loading = ref(false)
+const actionLoading = ref(false)
 const orders = ref<Order[]>([])
 const activeTab = ref('all')
 const currentPage = ref(1)
@@ -361,13 +357,18 @@ const handleStatusUpdate = async (order: Order, newStatus: string) => {
     return
   }
 
+  actionLoading.value = true
   try {
     await orderApi.updateOrderStatus(order.id, newStatus)
     ElMessage.success(`${actionText}成功`)
-    expandedRows.value = []
-    loadOrders()
+    // 刷新订单，保持当前展开状态
+    await loadOrders()
+    // 重新设置展开行
+    expandedRows.value = expandedRows.value.filter(id => orders.value.some(o => o.id === id))
   } catch (error: any) {
     ElMessage.error(error?.response?.data?.detail || `${actionText}失败`)
+  } finally {
+    actionLoading.value = false
   }
 }
 

@@ -37,9 +37,10 @@
 
       <!-- 支付码展示（counter_pay 模式） -->
       <div v-if="order.status === 'pending_payment'" class="payment-code-section">
-        <div class="payment-code-label">支付码</div>
+        <div class="payment-code-label">扫码支付</div>
         <div class="payment-code-box">
-          <div class="payment-code">{{ paymentCode }}</div>
+          <img v-if="qrCodeUrl" :src="qrCodeUrl" alt="支付二维码" class="qr-code-image" />
+          <div v-else class="payment-code">{{ paymentCode }}</div>
         </div>
         <div class="countdown-box">
           <div class="countdown-label">剩余时间</div>
@@ -109,10 +110,24 @@ const order = ref<Order | null>(null)
 const error = ref('')
 const confirming = ref(false)
 const countdown = ref(0)
+const qrCodeUrl = ref('')
 let countdownTimer: ReturnType<typeof setInterval> | null = null
 const ORDER_EXPIRE_MINUTES = 10
 
-const paymentCode = computed(() => {
+async function generateQRCode(orderData: Order) {
+  qrCodeUrl.value = ''
+  const content = `${orderData.id}:${orderData.total_amount}:${Date.now()}`
+  try {
+    const QRCode = (await import('qrcode')).default
+    qrCodeUrl.value = await QRCode.toDataURL(content, {
+      width: 200,
+      margin: 2,
+      color: { dark: '#000000', light: '#ffffff' }
+    })
+  } catch (e) {
+    console.error('QR code generation failed:', e)
+  }
+}
   if (order.value?.payment_code) return order.value.payment_code
   if (order.value?.payment_token) {
     return `ORDER-${order.value.id}-${order.value.payment_token.substring(0, 8).toUpperCase()}`
@@ -156,6 +171,11 @@ async function fetchOrder() {
     }
     const data = await res.json()
     order.value = data
+
+    // 生成支付二维码
+    if (data.status === 'pending_payment') {
+      generateQRCode(data)
+    }
 
     // 根据状态处理倒计时
     if (data.status === 'pending_payment') {
@@ -386,6 +406,13 @@ onUnmounted(() => {
   border-radius: 8px;
   padding: 16px;
   text-align: center;
+}
+
+.qr-code-image {
+  width: 200px;
+  height: 200px;
+  display: block;
+  margin: 0 auto;
 }
 
 .payment-code {
