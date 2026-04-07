@@ -92,11 +92,15 @@
           </template>
         </el-table-column>
 
-        <el-table-column label="状态" width="100">
+        <el-table-column label="状态" width="120">
           <template #default="{ row }">
+            <el-tag :type="row.is_available ? 'success' : 'info'" size="small">
+              {{ row.is_available ? '上架' : '下架' }}
+            </el-tag>
             <el-switch
               v-model="row.is_available"
               :loading="row.statusLoading"
+              style="margin-left: 8px"
               @change="handleStatusChange(row)"
             />
           </template>

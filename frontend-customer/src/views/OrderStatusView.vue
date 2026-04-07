@@ -86,7 +86,7 @@ import { useRoute, useRouter } from 'vue-router'
 import axios from 'axios'
 import { WarningFilled, Loading } from '@element-plus/icons-vue'
 
-const API_BASE = 'http://localhost:8002/api/v1'
+const API_BASE = 'http://localhost:8003/api/v1'
 
 const route = useRoute()
 const router = useRouter()

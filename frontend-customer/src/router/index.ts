@@ -38,6 +38,10 @@ const router = createRouter({
   history: createWebHistory(),
   routes: [
     {
+      path: '/',
+      redirect: '/customer/h5',
+    },
+    {
       path: '/customer/h5',
       name: 'menu',
       component: MenuView,

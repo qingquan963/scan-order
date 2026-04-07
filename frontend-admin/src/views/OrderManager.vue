@@ -327,10 +327,17 @@ const loadOrderDetail = async (orderId: number) => {
   try {
     const response = await orderApi.getOrder(orderId)
     if (response.data) {
-      const order = orders.value.find(o => o.id === orderId)
-      if (order) {
-        order.items = response.data.items || []
-        order.table = response.data.table
+      const index = orders.value.findIndex(o => o.id === orderId)
+      if (index !== -1) {
+        // 使用 splice 触发 Vue 响应式更新
+        const newItems = response.data.items || []
+        const newTable = response.data.table
+        // 创建新数组引用以确保 Vue 检测到变化
+        orders.value[index] = {
+          ...orders.value[index],
+          items: newItems,
+          table: newTable
+        }
       }
     }
   } catch (error) {

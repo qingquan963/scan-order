@@ -4,7 +4,7 @@
     <el-aside :width="isCollapse ? '64px' : '220px'" class="sidebar">
       <!-- Logo 区域 -->
       <div class="sidebar-logo">
-        <span v-if="!isCollapse" class="logo-text">龙虾小兵</span>
+        <span v-if="!isCollapse" class="logo-text">扫码点餐</span>
         <el-icon v-else class="collapse-icon"><Food /></el-icon>
       </div>
 
@@ -186,6 +186,8 @@ const handleLogout = () => {
   flex-direction: column;
   transition: width 0.3s;
   overflow: hidden;
+  position: relative;
+  z-index: 100;
 }
 
 .sidebar-logo {
@@ -219,6 +221,7 @@ const handleLogout = () => {
   flex: 1;
   border-right: none;
   background: transparent;
+  pointer-events: auto;
 }
 
 .sidebar-menu:not(.el-menu--collapse) {
@@ -252,6 +255,7 @@ const handleLogout = () => {
 .sidebar-footer {
   padding: 12px 8px;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
+  pointer-events: auto;
 }
 
 .collapse-btn {

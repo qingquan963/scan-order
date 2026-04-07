@@ -115,9 +115,9 @@
       v-model="qrDialogVisible"
       :title="`桌台二维码 - ${currentTable?.name || ''}`"
       width="360px"
-      align-center
+      @close="qrDialogClosed"
     >
-      <div class="qrcode-container" v-if="currentTable">
+      <div class="qrcode-container" v-if="currentTable" @click.stop>
         <div class="qrcode-info">
           <div class="qrcode-table-name">{{ currentTable.name }}</div>
           <div class="qrcode-table-code">编号: {{ currentTable.code }}</div>
@@ -147,8 +147,11 @@ import { ref, computed, onMounted } from 'vue'
 import { ElMessage, ElMessageBox, type FormInstance, type FormRules } from 'element-plus'
 import { Plus, Grid, User, InfoFilled } from '@element-plus/icons-vue'
 import { tableApi } from '@/services/api'
+import { useAuthStore } from '@/stores/auth'
+import axios from 'axios'
 
-const API_BASE = 'http://localhost:8002/api/v1'
+const API_BASE = 'http://localhost:8003/api/v1'
+const auth = useAuthStore()
 
 const loading = ref(false)
 const submitLoading = ref(false)
@@ -262,6 +265,14 @@ const showEditDialog = (row: Table) => {
   dialogVisible.value = true
 }
 
+// Phase 2: 二维码弹窗关闭清理
+const qrDialogClosed = () => {
+  if (qrCodeUrl.value) {
+    URL.revokeObjectURL(qrCodeUrl.value)
+    qrCodeUrl.value = ''
+  }
+}
+
 // Phase 2: 显示二维码
 const showQrCode = async (row: Table) => {
   currentTable.value = row
@@ -269,8 +280,12 @@ const showQrCode = async (row: Table) => {
   qrCodeUrl.value = ''
   qrLoading.value = true
   try {
-    // 直接使用 img 标签加载后端PNG
-    qrCodeUrl.value = `${API_BASE}/admin/tables/${row.id}/qrcode`
+    // 通过axios请求获取图片，转为data URL（带认证头）
+    const response = await axios.get(`${API_BASE}/admin/tables/${row.id}/qrcode`, {
+      headers: { Authorization: `Bearer ${auth.token}` },
+      responseType: 'blob'
+    })
+    qrCodeUrl.value = URL.createObjectURL(response.data)
   } catch (error) {
     console.error('加载二维码失败:', error)
     ElMessage.error('加载二维码失败')

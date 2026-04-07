@@ -154,7 +154,7 @@ const activeTab = ref('preparing')
 const currentPage = ref(1)
 const pageSize = ref(50)
 const total = ref(0)
-const totalPages = computed(() => Math.ceil(total.value / pageSize) || 1)
+const totalPages = computed(() => Math.ceil(total.value / pageSize.value) || 1)
 const orders = ref<KitchenOrder[]>([])
 const loading = ref(false)
 const conflictDialogVisible = ref(false)
@@ -391,7 +391,7 @@ onUnmounted(() => {
 
 <!-- OrderCard 子组件（内联） -->
 <script lang="ts">
-import { defineComponent, PropType } from 'vue'
+import { defineComponent, type PropType } from 'vue'
 
 const OrderCard = defineComponent({
   name: 'OrderCard',
@@ -466,7 +466,6 @@ const OrderCard = defineComponent({
   `
 })
 
-import { computed } from 'vue'
 </script>
 
 <style scoped>

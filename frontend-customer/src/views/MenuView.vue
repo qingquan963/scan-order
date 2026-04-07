@@ -4,7 +4,7 @@ import { useRoute, useRouter } from 'vue-router'
 import DishCard from '../components/DishCard.vue'
 import CartBar from '../components/CartBar.vue'
 
-const API_BASE = 'http://localhost:8002/api/v1'
+const API_BASE = 'http://localhost:8003/api/v1'
 
 const route = useRoute()
 const router = useRouter()

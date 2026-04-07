@@ -3,7 +3,7 @@
  */
 import axios from 'axios'
 
-const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:8002'
+const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:8003'
 
 const kitchenApi = axios.create({
   baseURL: API_BASE,
