@@ -128,6 +128,7 @@ async function generateQRCode(orderData: Order) {
     console.error('QR code generation failed:', e)
   }
 }
+const paymentCode = computed(() => {
   if (order.value?.payment_code) return order.value.payment_code
   if (order.value?.payment_token) {
     return `ORDER-${order.value.id}-${order.value.payment_token.substring(0, 8).toUpperCase()}`
