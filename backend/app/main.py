@@ -9,7 +9,7 @@ from app.models.order import Order
 from app.api.v1 import customer, admin, public
 from api.kitchen import router as kitchen_router
 from middleware.tenant_resolver import TenantMiddleware
-from auth.routes import router as auth_router
+from app.auth.routes import router as auth_router
 from api.tenant_info import router as tenant_router
 from api.usage import router as usage_router
 from api.tiers import router as tiers_router
