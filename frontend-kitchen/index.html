@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>后厨看板 - KDS</title>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif; background: #1a1a2e; color: #eee; min-height: 100vh; }
+    #app { padding: 20px; }
+    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 2px solid #333; }
+    .header h1 { font-size: 28px; color: #e94560; }
+    .tenant-badge { background: #16213e; padding: 8px 16px; border-radius: 20px; font-size: 14px; color: #0f3460; background: #e94560; color: white; }
+    .orders { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+    .order-card { background: #16213e; border-radius: 12px; padding: 16px; border-left: 4px solid #e94560; transition: transform 0.2s; }
+    .order-card:hover { transform: translateY(-2px); }
+    .order-card.preparing { border-left-color: #f39c12; }
+    .order-card.pending { border-left-color: #3498db; }
+    .table-no { font-size: 22px; font-weight: bold; color: #e94560; margin-bottom: 12px; }
+    .items { margin-bottom: 12px; }
+    .item { padding: 8px 0; border-bottom: 1px solid #0f3460; display: flex; justify-content: space-between; }
+    .item:last-child { border-bottom: none; }
+    .item-name { color: #fff; }
+    .item-qty { color: #e94560; font-weight: bold; }
+    .item-remark { font-size: 12px; color: #888; }
+    .actions { display: flex; gap: 8px; }
+    .btn { flex: 1; padding: 10px; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: bold; transition: opacity 0.2s; }
+    .btn:hover { opacity: 0.85; }
+    .btn-start { background: #f39c12; color: #fff; }
+    .btn-done { background: #27ae60; color: #fff; }
+    .empty { text-align: center; padding: 60px; color: #666; font-size: 18px; }
+    .refresh-btn { background: #0f3460; color: #e94560; border: 1px solid #e94560; }
+    .status-tag { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 12px; margin-bottom: 8px; }
+    .status-preparing { background: #f39c12; color: #fff; }
+    .status-pending { background: #3498db; color: #fff; }
+    .order-time { font-size: 12px; color: #666; margin-bottom: 8px; }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div class="header">
+      <h1>🍳 后厨看板</h1>
+      <div style="display:flex;gap:12px;align-items:center;">
+        <span class="tenant-badge" v-if="tenant">{{ tenant }}</span>
+        <button class="btn refresh-btn" @click="fetchOrders">🔄 刷新</button>
+      </div>
+    </div>
+    <div v-if="orders.length === 0" class="empty">暂无待制作订单</div>
+    <div class="orders" v-else>
+      <div v-for="order in orders" :key="order.id" class="order-card" :class="order.kitchen_status || order.status">
+        <div class="status-tag" :class="'status-' + (order.kitchen_status || order.status)">
+          {{ statusText(order.kitchen_status || order.status) }}
+        </div>
+        <div class="table-no">🪑 桌台 {{ order.table_id }}</div>
+        <div class="order-time">#{{ order.order_number }} · {{ order.created_at }}</div>
+        <div class="items">
+          <div v-for="item in order.items" :key="item.id" class="item">
+            <div>
+              <div class="item-name">{{ item.dish_name }}</div>
+              <div v-if="item.remark" class="item-remark">📝 {{ item.remark }}</div>
+            </div>
+            <div class="item-qty">×{{ item.quantity }}</div>
+          </div>
+        </div>
+        <div class="actions">
+          <button v-if="order.kitchen_status !== 'preparing'" class="btn btn-start" @click="startOrder(order.id)">开始制作</button>
+          <button class="btn btn-done" @click="markDone(order.id)">✅ 完成</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <script>
+    const { createApp, ref, onMounted } = Vue;
+    createApp({
+      setup() {
+        const orders = ref([]);
+        const tenant = ref(localStorage.getItem('tenant_name') || '未知商户');
+        const API_BASE = localStorage.getItem('API_BASE') || 'http://localhost:8000';
+
+        async function fetchOrders() {
+          try {
+            const token = localStorage.getItem('token');
+            const res = await axios.get(`${API_BASE}/api/v1/kitchen/orders`, {
+              headers: { Authorization: `Bearer ${token}` }
+            });
+            orders.value = res.data.orders || [];
+          } catch (e) {
+            console.error('获取订单失败', e);
+          }
+        }
+
+        async function startOrder(orderId) {
+          try {
+            const token = localStorage.getItem('token');
+            await axios.post(`${API_BASE}/api/v1/kitchen/orders/${orderId}/start`, {}, {
+              headers: { Authorization: `Bearer ${token}` }
+            });
+            fetchOrders();
+          } catch (e) {
+            alert('操作失败: ' + (e.response?.data?.detail || e.message));
+          }
+        }
+
+        async function markDone(orderId) {
+          try {
+            const token = localStorage.getItem('token');
+            await axios.post(`${API_BASE}/api/v1/kitchen/orders/${orderId}/done`, {}, {
+              headers: { Authorization: `Bearer ${token}` }
+            });
+            fetchOrders();
+          } catch (e) {
+            alert('操作失败: ' + (e.response?.data?.detail || e.message));
+          }
+        }
+
+        function statusText(status) {
+          const map = { preparing: '制作中', pending: '待制作', in_progress: '制作中', done: '已完成' };
+          return map[status] || status;
+        }
+
+        onMounted(() => {
+          fetchOrders();
+          setInterval(fetchOrders, 10000); // 每10秒自动刷新
+        });
+
+        return { orders, tenant, fetchOrders, startOrder, markDone, statusText };
+      }
+    }).mount('#app');
+  </script>
+</body>
+</html>

@@ -177,4 +177,16 @@ export const merchantApi = {
     api.put('/api/v1/admin/settings', data)
 }
 
+// 套餐与用量API（Phase 6）
+export const tierApi = {
+  // 获取所有套餐（公开接口，无需登录）
+  getTiers: () => api.get('/api/v1/public/tiers'),
+  
+  // 获取当前商户用量（需登录）
+  getUsage: () => api.get('/api/v1/tenant/usage'),
+  
+  // 获取当前商户信息（需登录）
+  getTenant: () => api.get('/api/v1/tenant')
+}
+
 export default api

@@ -6,7 +6,7 @@ import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import './style.css'
 import App from './App.vue'
 import router from './router'
-import { useAuthStore } from './stores/auth'
+import { apiClient } from './api/client'
 
 const app = createApp(App)
 const pinia = createPinia()
@@ -20,8 +20,7 @@ app.use(pinia)
 app.use(router)
 app.use(ElementPlus)
 
-// 初始化 axios 拦截器（在 pinia 和 router 之后）
-const authStore = useAuthStore()
-authStore.initAxios()
+// 在 window 上挂载 apiClient
+window.$api = apiClient
 
 app.mount('#app')

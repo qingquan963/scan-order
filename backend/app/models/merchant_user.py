@@ -10,6 +10,8 @@ class MerchantUser(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     merchant_id = Column(Integer, ForeignKey("merchants.id"), nullable=False)
+    tenant_id = Column(String(36), ForeignKey("tenants.id"), nullable=False,
+                        default="00000000-0000-0000-0000-000000000001", index=True)
     username = Column(String(50), nullable=True)  # nullable for WeChat-only users
     password_hash = Column(String(255), nullable=True)  # nullable for WeChat-only users
     wx_openid = Column(String(100), unique=True, nullable=True)

@@ -8,3 +8,5 @@ python-multipart==0.0.6
 pydantic-settings==2.1.0
 qrcode==7.4.2
 pillow==10.2.0
+# Phase 1: PostgreSQL support
+psycopg2-binary>=2.9.9

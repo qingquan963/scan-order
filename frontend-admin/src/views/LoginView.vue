@@ -13,12 +13,13 @@
         class="login-form"
         @submit.prevent="handleLogin"
       >
-        <el-form-item prop="username">
+        <el-form-item prop="email">
           <el-input
-            v-model="loginForm.username"
-            placeholder="用户名"
+            v-model="loginForm.email"
+            type="email"
+            placeholder="邮箱"
             size="large"
-            :prefix-icon="User"
+            :prefix-icon="Message"
           />
         </el-form-item>
         
@@ -46,96 +47,36 @@
         </el-form-item>
         
         <div class="login-footer">
-          <el-button type="text" @click="showRegister = true">
+          <el-button type="text" @click="router.push('/register')">
             注册新商户
           </el-button>
         </div>
       </el-form>
     </div>
-    
-    <!-- 注册对话框 -->
-    <el-dialog
-      v-model="showRegister"
-      title="注册新商户"
-      width="400px"
-      :close-on-click-modal="false"
-    >
-      <el-form
-        ref="registerFormRef"
-        :model="registerForm"
-        :rules="registerRules"
-        label-width="80px"
-      >
-        <el-form-item label="商户名" prop="name">
-          <el-input
-            v-model="registerForm.name"
-            placeholder="请输入商户名称"
-          />
-        </el-form-item>
-        
-        <el-form-item label="用户名" prop="username">
-          <el-input
-            v-model="registerForm.username"
-            placeholder="请输入用户名"
-          />
-        </el-form-item>
-        
-        <el-form-item label="密码" prop="password">
-          <el-input
-            v-model="registerForm.password"
-            type="password"
-            placeholder="请输入密码"
-            show-password
-          />
-        </el-form-item>
-        
-        <el-form-item label="确认密码" prop="confirmPassword">
-          <el-input
-            v-model="registerForm.confirmPassword"
-            type="password"
-            placeholder="请再次输入密码"
-            show-password
-          />
-        </el-form-item>
-      </el-form>
-      
-      <template #footer>
-        <span class="dialog-footer">
-          <el-button @click="showRegister = false">取消</el-button>
-          <el-button
-            type="primary"
-            :loading="registerLoading"
-            @click="handleRegister"
-          >
-            注册
-          </el-button>
-        </span>
-      </template>
-    </el-dialog>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
-import { User, Lock } from '@element-plus/icons-vue'
+import { Lock, Message } from '@element-plus/icons-vue'
 import type { FormInstance, FormRules } from 'element-plus'
 import { ElMessage } from 'element-plus'
-import { useAuthStore } from '@/stores/auth'
+import { apiClient } from '@/api/client'
 
 const router = useRouter()
-const authStore = useAuthStore()
 
 // 登录表单
 const loginFormRef = ref<FormInstance>()
 const loginForm = reactive({
-  username: 'admin',
-  password: 'admin123'
+  email: '',
+  password: ''
 })
 
 const loginRules: FormRules = {
-  username: [
-    { required: true, message: '请输入用户名', trigger: 'blur' }
+  email: [
+    { required: true, message: '请输入邮箱', trigger: 'blur' },
+    { type: 'email', message: '请输入有效的邮箱地址', trigger: 'blur' }
   ],
   password: [
     { required: true, message: '请输入密码', trigger: 'blur' },
@@ -145,44 +86,6 @@ const loginRules: FormRules = {
 
 const loading = ref(false)
 
-// 注册相关
-const showRegister = ref(false)
-const registerFormRef = ref<FormInstance>()
-const registerForm = reactive({
-  name: '',
-  username: '',
-  password: '',
-  confirmPassword: ''
-})
-
-const registerRules: FormRules = {
-  name: [
-    { required: true, message: '请输入商户名称', trigger: 'blur' }
-  ],
-  username: [
-    { required: true, message: '请输入用户名', trigger: 'blur' }
-  ],
-  password: [
-    { required: true, message: '请输入密码', trigger: 'blur' },
-    { min: 6, message: '密码长度不能小于6位', trigger: 'blur' }
-  ],
-  confirmPassword: [
-    { required: true, message: '请确认密码', trigger: 'blur' },
-    {
-      validator: (rule, value, callback) => {
-        if (value !== registerForm.password) {
-          callback(new Error('两次输入密码不一致'))
-        } else {
-          callback()
-        }
-      },
-      trigger: 'blur'
-    }
-  ]
-}
-
-const registerLoading = ref(false)
-
 // 处理登录
 const handleLogin = async () => {
   if (!loginFormRef.value) return
@@ -191,46 +94,23 @@ const handleLogin = async () => {
     await loginFormRef.value.validate()
     loading.value = true
     
-    const result = await authStore.login(loginForm.username, loginForm.password)
+    const data = await apiClient.post<{
+      access_token: string
+      refresh_token: string
+      expires_in: number
+    }>('/auth/login', {
+      email: loginForm.email,
+      password: loginForm.password
+    })
     
-    if (result.success) {
-      ElMessage.success('登录成功')
-      router.push('/dashboard')
-    } else {
-      ElMessage.error(result.message || '登录失败')
-    }
-  } catch (error) {
+    apiClient.setToken(data)
+    ElMessage.success('登录成功')
+    router.push('/admin/panel')
+  } catch (error: any) {
     console.error('登录错误:', error)
+    ElMessage.error(error.message || '登录失败，请检查邮箱和密码')
   } finally {
     loading.value = false
-  }
-}
-
-// 处理注册
-const handleRegister = async () => {
-  if (!registerFormRef.value) return
-  
-  try {
-    await registerFormRef.value.validate()
-    registerLoading.value = true
-    
-    const result = await authStore.register(
-      registerForm.name,
-      registerForm.username,
-      registerForm.password
-    )
-    
-    if (result.success) {
-      ElMessage.success('注册成功')
-      showRegister.value = false
-      router.push('/dashboard')
-    } else {
-      ElMessage.error(result.message || '注册失败')
-    }
-  } catch (error) {
-    console.error('注册错误:', error)
-  } finally {
-    registerLoading.value = false
   }
 }
 </script>
@@ -282,11 +162,5 @@ const handleRegister = async () => {
 .login-footer {
   text-align: center;
   margin-top: 20px;
-}
-
-.dialog-footer {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
 }
 </style>

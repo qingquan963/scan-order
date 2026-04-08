@@ -27,6 +27,9 @@ from app.models.daily_revenue import DailyRevenue
 from app.models.monthly_revenue import MonthlyRevenue
 from app.models.report_correction import ReportCorrection
 
+# Phase 1: 租户模型
+from app.models.tenant import Tenant
+
 # 强制 SQLAlchemy 完成所有 mapper + relationship 配置
 import sqlalchemy.orm
 sqlalchemy.orm.configure_mappers()
@@ -34,5 +37,6 @@ sqlalchemy.orm.configure_mappers()
 __all__ = [
     "Merchant", "Category", "Dish", "DiningTable", "Order", "OrderItem", "MerchantSettings",
     "PlatformAdmin", "MerchantUser", "MerchantToken", "WxAuthState", "WxRefreshToken", "AuditLog",
-    "DailyRevenue", "MonthlyRevenue", "ReportCorrection"
+    "DailyRevenue", "MonthlyRevenue", "ReportCorrection",
+    "Tenant"
 ]

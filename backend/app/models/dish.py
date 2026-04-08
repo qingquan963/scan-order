@@ -10,10 +10,12 @@ class Dish(Base):
     id = Column(Integer, primary_key=True, index=True)
     merchant_id = Column(Integer, ForeignKey("merchants.id"), nullable=False)
     category_id = Column(Integer, ForeignKey("categories.id"), nullable=False)
+    tenant_id = Column(String(36), ForeignKey("tenants.id"), nullable=False,
+                        default="00000000-0000-0000-0000-000000000001", index=True)
     name = Column(String(100), nullable=False)
     description = Column(Text, nullable=True, default="")
     price = Column(Float, nullable=False)
-    image_url = Column(String(500), nullable=True, default="")
+    image_url = Column(Text, nullable=True, default="")
     is_available = Column(Boolean, default=True)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)

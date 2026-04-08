@@ -7,6 +7,12 @@ from app.database import init_db, SessionLocal
 from app.config import Settings
 from app.models.order import Order
 from app.api.v1 import customer, admin, public
+from api.kitchen import router as kitchen_router
+from middleware.tenant_resolver import TenantMiddleware
+from auth.routes import router as auth_router
+from api.tenant_info import router as tenant_router
+from api.usage import router as usage_router
+from api.tiers import router as tiers_router
 
 settings = Settings()
 
@@ -130,6 +136,9 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(title="Scan Order API", version="1.0.0", lifespan=lifespan)
 
+# Phase 2: 租户解析中间件（最早注册，解析每个请求的 tenant context）
+app.add_middleware(TenantMiddleware)
+
 # 添加CORS中间件
 app.add_middleware(
     CORSMiddleware,
@@ -139,9 +148,16 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Phase 2: 认证路由（公开，无需租户 context）
+app.include_router(auth_router)
+app.include_router(tenant_router)
+
 app.include_router(public.router, prefix="/api/v1", tags=["公共接口"])
 app.include_router(customer.router, prefix="/api/v1/customer", tags=["顾客端"])
 app.include_router(admin.router, prefix="/api/v1/admin", tags=["商户后台"])
+app.include_router(kitchen_router, tags=["后厨屏"])
+app.include_router(usage_router, tags=["租户用量"])
+app.include_router(tiers_router, tags=["公开套餐"])
 
 
 @app.get("/")

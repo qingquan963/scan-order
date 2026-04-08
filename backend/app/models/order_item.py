@@ -10,6 +10,8 @@ class OrderItem(Base):
     id = Column(Integer, primary_key=True, index=True)
     order_id = Column(Integer, ForeignKey("orders.id"), nullable=False)
     dish_id = Column(Integer, ForeignKey("dishes.id"), nullable=False)
+    tenant_id = Column(String(36), ForeignKey("tenants.id"), nullable=False,
+                        default="00000000-0000-0000-0000-000000000001", index=True)
     dish_name = Column(String(100), nullable=False)
     unit_price = Column(Float, nullable=False)
     quantity = Column(Integer, nullable=False, default=1)

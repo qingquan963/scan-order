@@ -45,6 +45,11 @@
           <el-icon><Setting /></el-icon>
           <template #title>商户设置</template>
         </el-menu-item>
+
+        <el-menu-item index="/pricing">
+          <el-icon><PriceTag /></el-icon>
+          <template #title>套餐方案</template>
+        </el-menu-item>
       </el-menu>
 
       <!-- 折叠按钮 -->
@@ -102,6 +107,9 @@
         </router-view>
       </el-main>
     </el-container>
+
+    <!-- 升级弹窗（全局） -->
+    <UpgradeModal />
   </el-container>
 </template>
 
@@ -116,12 +124,14 @@ import {
   Grid,
   List,
   Setting,
+  PriceTag,
   Fold,
   Expand,
   SwitchButton,
   User
 } from '@element-plus/icons-vue'
 import { useAuthStore } from '@/stores/auth'
+import UpgradeModal from '@/components/UpgradeModal.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -140,7 +150,9 @@ const routeNameMap: Record<string, string> = {
   dishes: '菜品管理',
   tables: '桌台管理',
   orders: '订单管理',
-  settings: '商户设置'
+  settings: '商户设置',
+  'tenant-settings': '套餐信息',
+  pricing: '套餐方案'
 }
 
 const currentRouteNameCN = computed(() => {

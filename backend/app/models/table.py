@@ -9,6 +9,8 @@ class DiningTable(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     merchant_id = Column(Integer, ForeignKey("merchants.id"), nullable=False)
+    tenant_id = Column(String(36), ForeignKey("tenants.id"), nullable=False,
+                        default="00000000-0000-0000-0000-000000000001", index=True)
     code = Column(String(20), nullable=False, unique=True, index=True)
     name = Column(String(100), default="")
     capacity = Column(Integer, default=4)

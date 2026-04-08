@@ -10,6 +10,8 @@ class Order(Base):
     id = Column(Integer, primary_key=True, index=True)
     merchant_id = Column(Integer, ForeignKey("merchants.id"), nullable=False)
     table_id = Column(Integer, ForeignKey("dining_tables.id"), nullable=False)
+    tenant_id = Column(String(36), ForeignKey("tenants.id"), nullable=False,
+                        default="00000000-0000-0000-0000-000000000001", index=True)
     order_number = Column(String(50), nullable=False, unique=True, index=True)
     status = Column(String(20), default="pending")
     total_amount = Column(Float, default=0)
